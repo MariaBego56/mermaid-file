@@ -1,25 +1,41 @@
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
 <script>
-  mermaid.initialize({ startOnLoad: true });
+  document.addEventListener('DOMContentLoaded', function () {
+    mermaid.initialize({
+      startOnLoad: true,
+      securityLevel: 'loose',
+      flowchart: { htmlLabels: true, useMaxWidth: true }
+    });
+  });
 </script>
 
+<!-- Diagram -->
 <pre class="mermaid">
----
-config:
-flowchart:
-layout: dagre
----
-flowchart BT
-subgraph home["Home LAN — 10.10.10.0/24"]
-pi4["Raspberry Pi 4"]
-nas["NAS"]
-dots["..."]
-end
-host["Host"] -- |ppp0| --> internet(("Public Internet"))
-internet -- |ppp0| --> router["Router"]
-router --- pi4 & nas & dots
-style host fill:#FFE0B2
-style internet fill:#BBDEFB
-style router fill:#FFF9C4
-style home fill:#FFD600
+flowchart LR
+  %% Topology: alpha site <—WireGuard—> beta site via public internet
+
+  subgraph alpha["alpha site — 10.10.10.0/24"]
+    wgA["wgA<br/>10.10.10.1<br/>10.10.9.0"]
+    a1["..."]
+    a2["..."]
+    wgA --- a1
+    wgA --- a2
+  end
+
+  subgraph beta["beta site — 10.10.11.0/24"]
+    wgB["wgB<br/>10.10.11.1<br/>10.10.9.1"]
+    b1["..."]
+    b2["..."]
+    wgB --- b1
+    wgB --- b2
+  end
+
+  internet(("public internet"))
+
+  %% External links
+  wgA -. "ext" .- internet
+  internet -. "ext" .- wgB
+
+  %% WireGuard tunnel between sites
+  wgA -. "WireGuard tunnel<br/>10.10.9.0/31" .- wgB
 </pre>
