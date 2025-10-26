@@ -1,15 +1,28 @@
-flowchart BT
-subgraph home["home network, .home domain — 10.10.10.0/24"]
-pi4["pi4"]
-nas["NAS"]
-dots["..."]
-end
-laptop["Laptop in<br>Coffee shop"] -- |wlan0| --> internet(("public internet"))
-internet -- |ppp0| --> router["router<br>.home = 10.10.10.1"]
-laptop -. "wg0 10.10.11.2/24" .-> vpn(("VPN network"))
-router -. "wg0 10.10.11.1/24" .-> vpn
-router --- pi4 & nas & dots
-n1["Text Block"]
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({ startOnLoad: true });
+</script>
 
-n1:::spacer
-classDef spacer stroke-width:0,fill-opacity:0
+<pre class="mermaid">
+%%{init: {'flowchart': {'layout': 'dagre'}}}%%
+flowchart BT
+ subgraph home["home network, .home domain — 10.10.10.0/24"]
+        pi4["pi4"]
+        nas["NAS"]
+        dots["..."]
+  end
+    laptop["Laptop in<br>Coffee shop"] -- |wlan0| --> internet(("public internet"))
+    internet -- |ppp0| --> router["router<br>.home = 10.10.10.1"]
+    laptop -. "wg0 10.10.11.2/24" .-> vpn(("VPN network"))
+    router -. "wg0 10.10.11.1/24" .-> vpn
+    router --- pi4 & nas & dots
+    n1["Text Block"]
+
+     n1:::spacer
+    classDef spacer stroke-width:0,fill-opacity:0
+
+  style host fill:#FFE0B2
+  style internet fill:#BBDEFB
+  style router fill:#FFF9C4
+  style home fill:#FFD600
+</pre>
