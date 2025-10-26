@@ -9,33 +9,34 @@
   });
 </script>
 
-<!-- Diagram -->
+<!-- Mermaid diagram -->
 <pre class="mermaid">
 flowchart LR
-  %% Topology: alpha site <—WireGuard—> beta site via public internet
+  %% Diagram: VPN connection from public internet to home LAN
 
-  subgraph alpha["alpha site — 10.10.10.0/24"]
-    wgA["wgA<br/>10.10.10.1<br/>10.10.9.0"]
-    a1["..."]
-    a2["..."]
-    wgA --- a1
-    wgA --- a2
+  %% Home network
+  subgraph home["home network, .home domain — 10.10.10.0/24"]
+    router["router"]
+    pi4["pi4"]
+    nas["NAS"]
+    dots["..."]
+    router --- pi4
+    router --- nas
+    router --- dots
   end
 
-  subgraph beta["beta site — 10.10.11.0/24"]
-    wgB["wgB<br/>10.10.11.1<br/>10.10.9.1"]
-    b1["..."]
-    b2["..."]
-    wgB --- b1
-    wgB --- b2
-  end
-
+  %% External/public side
   internet(("public internet"))
+  host["remote host<br/>10.10.10.11/24"]
 
-  %% External links
-  wgA -. "ext" .- internet
-  internet -. "ext" .- wgB
+  %% PPP connection
+  host --|ppp0|--> internet
+  internet --|ppp0|--> router
 
-  %% WireGuard tunnel between sites
-  wgA -. "WireGuard tunnel<br/>10.10.9.0/31" .- wgB
+  %% VPN connection
+  host -. "wg0<br/>10.10.10.10/32" .- pi4
+
+  %% Reserved range note
+  note["Reserved for VPN users:<br/>10.10.10.10–49"]
+  note --- pi4
 </pre>
